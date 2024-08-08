@@ -6,9 +6,6 @@ const loadConfig = (configPath) => {
     let fullPath = path.resolve(process.cwd(), configPath);
 
     if (!fs.existsSync(fullPath)) {
-      console.warn(
-        `Config file not found at ${configPath}. Falling back to default template.`
-      );
       fullPath = path.resolve(__dirname, "./config/migration.template.js");
     }
 

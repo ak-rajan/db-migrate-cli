@@ -5,6 +5,7 @@ const coreDal = require("./dal/core-dal");
 const mysql = require("mysql2/promise");
 const loadConfig = require("./config-loader");
 const sqlFilePath = path.join(__dirname, "./sql/setup.sql");
+const database = require("./database");
 
 class Migration {
   constructor() {
@@ -14,25 +15,27 @@ class Migration {
   }
 
   init = async () => {
+    let connection;
     const chalk = (await import("chalk")).default;
-    const sqlContent = await fs.readFile(sqlFilePath, "utf8");
-
-    const connection = await mysql.createConnection({
-      host: this.database.host,
-      user: this.database.user,
-      password: this.database.password,
-      database: this.database.database,
-      multipleStatements: true,
-    });
-
     try {
+      const sqlContent = await fs.readFile(sqlFilePath, "utf8");
+
+      connection = await mysql.createConnection({
+        host: this.database.host,
+        user: this.database.user,
+        password: this.database.password,
+        database: this.database.database,
+        multipleStatements: true,
+      });
+
       await connection.query(sqlContent);
       console.log(chalk.green("Migration initializated successfully."));
     } catch (err) {
       console.error(chalk.red(`Error initializing migration: ${err.message}`));
+    } finally {
+      await connection.end();
+      process.exit();
     }
-
-    await connection.end();
   };
 
   // Get migration files sorted by name
