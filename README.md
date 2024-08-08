@@ -8,7 +8,7 @@
 ## Table of Contents
 -   [Installation](#installation)
 -   [Usage](#usage)
-    -   [Quick Start](#quick-start)
+    -   [Quick Start](#🚀-quick-start)
     -   [Commands](#commands)
         -   [setup](#setup)
         -   [migrate:init](#migrateinit)
@@ -28,7 +28,7 @@ npm  install  -g  db-migrate-cli
 This will make the `db-cli` command available globally on your system, allowing you to run migration commands from anywhere.
 
 ## Usage
-### 🚀 Quick Start
+### <a id="quick-start"></a> 🚀 Quick Start
 Get up and running with `db-migrate-cli` in just a few simple steps! Here's how you can manage your database migrations like a pro.
 #### **1. Setup Your Migration Configuration**
 Kickstart your migration process by setting up the configuration file.
@@ -91,10 +91,33 @@ db-cli  rollback
 ```
 
 ## Configuration
-After running `db-cli setup`, edit the `config/migration.js` file to specify:
 
- -   `migrationDir`: Directory where migration files are stored.
- -    Database connection settings: Configure your database connection parameters.
+After running `db-cli setup`, you will have a `config/migration.js` file in your project. You'll need to edit this file to specify your migration directory and database connection settings. Here's how:
+```json
+module.exports = {
+  migrationDir: 'migrations',  // Directory where migration files are stored
+
+  // Database connection settings
+  db: {
+    host: 'localhost',         // Database host
+    user: 'root',              // Database user
+    password: 'password',      // Database password
+    database: 'my_database',   // Database name
+    port: 3306                 // (Optional) Default is 3306
+  }
+};
+```
+### Configuration Options:
+
+-   **`migrationDir`**: The directory where your migration files will be stored. This is where new migration files created with `db-cli make:migration` will be saved.
+    
+-   **`db` Object**: Contains your database connection settings:
+    
+    -   **`host`**: The hostname of your database server.
+    -   **`user`**: The username used to connect to the database.
+    -   **`password`**: The password associated with the database user.
+    -   **`database`**: The name of the database where migrations will be applied.
+    -   **`port`**: (Optional) The port on which your database server is listening. Defaults to `3306` for MySQL/MariaDB.
 
 ## Dependencies
 
