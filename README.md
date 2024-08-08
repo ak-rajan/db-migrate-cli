@@ -8,7 +8,7 @@
 ## Table of Contents
 -   [Installation](#installation)
 -   [Usage](#usage)
-    -   [Quick Start](#🚀-quick-start)
+    -   [Quick Start](#quick-start)
     -   [Commands](#commands)
         -   [setup](#setup)
         -   [migrate:init](#migrateinit)
