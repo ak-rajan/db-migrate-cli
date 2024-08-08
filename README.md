@@ -8,6 +8,7 @@
 ## Table of Contents
 -   [Installation](#installation)
 -   [Usage](#usage)
+    -   [Quick Start](#quick-start)
     -   [Commands](#commands)
         -   [setup](#setup)
         -   [migrate:init](#migrateinit)
@@ -27,6 +28,41 @@ npm  install  -g  db-migrate-cli
 This will make the `db-cli` command available globally on your system, allowing you to run migration commands from anywhere.
 
 ## Usage
+### 🚀 Quick Start
+Get up and running with `db-migrate-cli` in just a few simple steps! Here's how you can manage your database migrations like a pro.
+#### **1. Setup Your Migration Configuration**
+Kickstart your migration process by setting up the configuration file.
+```bash
+db-cli setup
+```
+ - 📝 This creates the `config/migration.js` file in your project.
+ - 🔧 Customize the `migrationDir` and your database settings in this file.
+#### **2. Initialize Migration Infrastructure**
+Prepare your database for migrations by setting up the necessary tables and procedures.
+```bash
+db-cli migrate:init
+```
+-   🚀 This creates a `db_migrations` table in your configured database.
+-   ⚙️ Also sets up essential stored procedures to manage your migrations.
+#### **3. Create Your First Migration**
+Ready to make some changes? Create a new migration file with your desired changes.
+```bash
+db-cli make:migration <migration_name>
+```
+-   📁 The file is stored in the directory specified by `migrationDir`.
+-   ⏰ The file name includes a timestamp and is in snake case.
+#### **4. Apply Migrations**
+Time to execute your changes! Run all pending migrations to update your database.
+```bash
+db-cli migrate
+```
+- ✅ This applies all the migrations that haven't been executed yet.
+#### **5. Rollback Changes**
+Made a mistake? No problem! Rollback the last batch of changes.
+```bash
+db-cli rollback
+```
+- ⏪ This undoes the last set of migrations applied.
 ### Commands
 #### `setup`
 Initializes the migration configuration by creating the `config/migration.js` file in the current working directory. Configure the `migrationDir` and database settings in this file after running the command.
