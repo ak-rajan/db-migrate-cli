@@ -17,6 +17,7 @@ class Database {
       database: database.database,
       port: database.port,
       connectionLimit: 1,
+      multipleStatements: true,
     };
 
     this.connected = false;

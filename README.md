@@ -70,4 +70,4 @@ This project is licensed under the MIT License.
 
 ## Author
 
-Developed by Anjutech (<arunkumar@anjutech.com>).
+Developed by [Anjutech](https://www.anjutech.com) (<arunkumar@anjutech.com>).
