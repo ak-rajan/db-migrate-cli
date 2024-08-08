@@ -1,17 +1,17 @@
 {
-  "name": "db-migrate",
+  "name": "db-migrate-cli",
   "version": "1.0.0",
   "description": "A package to handle database migrations",
   "main": "index.js",
   "bin": {
-    "db-migrate-x": "./src/bin/cli.js"
+    "db-cli": "./src/bin/cli.js"
   },
   "scripts": {
     "setup": "node src/bin/cli.js setup",
-    "migrate": "node src/bin/cli.js migrate",
-    "rollback": "node src/bin/cli.js migrate:rollback",
+    "migrate:init": "node src/bin/cli.js migrate:init",
     "make:migration": "node src/bin/cli.js make:migration",
-    "postinstall": "node src/scripts/postinstall.js"
+    "migrate": "node src/bin/cli.js migrate",
+    "rollback": "node src/bin/cli.js rollback"
   },
   "keywords": [
     "migration",
@@ -20,7 +20,7 @@
     "mariadb"
   ],
   "author": "Anjutech <arunkumar@anjutech.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "chalk": "^5.3.0",
     "commander": "^12.1.0",

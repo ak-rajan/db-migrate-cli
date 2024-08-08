@@ -13,7 +13,7 @@ class Migration {
     this.database = config.database;
   }
 
-  setup = async () => {
+  init = async () => {
     const chalk = (await import("chalk")).default;
     const sqlContent = await fs.readFile(sqlFilePath, "utf8");
 
@@ -27,9 +27,9 @@ class Migration {
 
     try {
       await connection.query(sqlContent);
-      console.log(chalk.green("SQL setup completed successfully."));
+      console.log(chalk.green("Migration initializated successfully."));
     } catch (err) {
-      console.error(chalk.red(`Error executing SQL script: ${err.message}`));
+      console.error(chalk.red(`Error initializing migration: ${err.message}`));
     }
 
     await connection.end();

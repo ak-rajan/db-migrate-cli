@@ -1,7 +1,7 @@
 const { Command } = require("commander");
 const Migration = require("../migration");
 
-const migrationRollbackCommand = new Command("migrate:rollback")
+const runRollback = new Command("rollback")
   .description("Rollback migration files")
   .action(async () => {
     const migration = new Migration();
@@ -14,4 +14,4 @@ const migrationRollbackCommand = new Command("migrate:rollback")
     }
   });
 
-module.exports = migrationRollbackCommand;
+module.exports = runRollback;

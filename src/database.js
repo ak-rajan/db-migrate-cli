@@ -1,8 +1,6 @@
 const path = require("path");
 const mysql = require("mysql2/promise");
-
-const userConfigPath = path.join(process.cwd(), "config/migration.js");
-const { database } = require(userConfigPath);
+const loadConfig = require("./config-loader");
 
 class Database {
   constructor() {
@@ -10,6 +8,7 @@ class Database {
       return Database.instance;
     }
 
+    const { database } = loadConfig("config/migration.js");
     this.pool = null;
     this.poolConfig = {
       host: database.host,
