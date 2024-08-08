@@ -1,5 +1,5 @@
 {
-  "name": "db-migrate-x",
+  "name": "db-migrate",
   "version": "1.0.0",
   "description": "A package to handle database migrations",
   "main": "index.js",
