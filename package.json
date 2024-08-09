@@ -21,7 +21,7 @@
   ],
   "author": "Anjutech <arunkumar@anjutech.com>",
   "license": "MIT",
-  "readme": "README.md",
+  "readmeFilename": "README.md",
   "dependencies": {
     "chalk": "^5.3.0",
     "commander": "^12.1.0",

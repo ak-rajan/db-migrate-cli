@@ -90,7 +90,7 @@ db-cli make:migration create_users_table
 # Migration file created: migrations/2024_08_09_13_59_01_create_users_table.sql
 ```
 
-**Example Migration File:**
+**Anatomy of a Migration File:**
 ```sql
 -- migrations/2024_08_09_13_59_01_create_users_table.sql
 
