@@ -72,7 +72,6 @@ class Migration {
   // Rollback a single migration
   async rollbackMigration(migration) {
     const chalk = (await import("chalk")).default;
-    console.log(chalk.blue("Rollback: ") + migration.migration);
 
     const file = `${migration.migration}.sql`;
     const filePath = path.join(this.migrationsDir, file);
@@ -82,6 +81,7 @@ class Migration {
     if (downSql) {
       await this.executeSql(downSql);
       await migrationDal.deleteMigration(migration.id);
+      console.log(chalk.blue("Rollback: ") + migration.migration);
     } else {
       throw new Error(`No DOWN part found for migration ${file}`);
     }

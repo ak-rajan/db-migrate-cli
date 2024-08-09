@@ -27,42 +27,120 @@ npm  install  -g  db-migrate-cli
 ```
 This will make the `db-cli` command available globally on your system, allowing you to run migration commands from anywhere.
 
+
 ## Usage
+
 ### <a id="quick-start"></a> 🚀 Quick Start
 Get up and running with `db-migrate-cli` in just a few simple steps! Here's how you can manage your database migrations like a pro.
+
 #### **1. Setup Your Migration Configuration**
 Kickstart your migration process by setting up the configuration file.
+
 ```bash
-db-cli setup
+db-cli  setup
 ```
- - 📝 This creates the `config/migration.js` file in your project.
- - 🔧 Customize the `migrationDir` and your database settings in this file.
+
+- 📝 This creates the `config/migration.js` file in your project.
+- 🔧 Customize the `migrationDir` and your database settings in this file.
+
+**Example:**
+```bash
+# Setting up the migration configuration
+db-cli setup
+
+# Output:
+# Configuration file created at config/migration.js
+```
 #### **2. Initialize Migration Infrastructure**
 Prepare your database for migrations by setting up the necessary tables and procedures.
+
 ```bash
-db-cli migrate:init
+db-cli  migrate:init
 ```
--   🚀 This creates a `db_migrations` table in your configured database.
--   ⚙️ Also sets up essential stored procedures to manage your migrations.
+
+- 🚀 This creates a `db_migrations` table in your configured database.
+- ⚙️ Also sets up essential stored procedures to manage your migrations.
+
+**Example:**
+```bash
+# Initializing the migration infrastructure
+db-cli migrate:init
+
+# Output:
+# Migration infrastructure initialized. 'db_migrations' table created.
+# Procedures 'addMigration', 'deleteMigration', 'executeQuery', 'getLastBatchMigrations', and 'getMigrations' created.
+```
+
 #### **3. Create Your First Migration**
 Ready to make some changes? Create a new migration file with your desired changes.
+
 ```bash
-db-cli make:migration <migration_name>
+db-cli  make:migration <migration_name>
 ```
--   📁 The file is stored in the directory specified by `migrationDir`.
--   ⏰ The file name includes a timestamp and is in snake case.
+
+- 📁 The file is stored in the directory specified by `migrationDir`.
+- ⏰ The file name includes a timestamp and is in snake case.
+
+**Example:**
+```bash
+# Creating a new migration file
+db-cli make:migration create_users_table
+
+# Output:
+# Migration file created: migrations/2024_08_09_13_59_01_create_users_table.sql
+```
+
+**Example Migration File:**
+```sql
+-- migrations/2024_08_09_13_59_01_create_users_table.sql
+
+-- UP
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INT
+);
+
+-- DOWN
+DROP TABLE users;
+```
+This migration file contains the SQL commands necessary to create a `users` table in the database. The `-- UP` section includes the SQL to apply the changes, and the `-- DOWN` section provides the SQL to undo them.
+
 #### **4. Apply Migrations**
 Time to execute your changes! Run all pending migrations to update your database.
+
 ```bash
-db-cli migrate
+db-cli  migrate
 ```
+
 - ✅ This applies all the migrations that haven't been executed yet.
+
+**Example:**
+```bash
+# Applying all pending migrations
+db-cli migrate
+
+# Output:
+# Migrating: 2024_08_09_13_59_01_create_users_table
+# Migrated: 2024_08_09_13_59_01_create_users_table
+```
 #### **5. Rollback Changes**
 Made a mistake? No problem! Rollback the last batch of changes.
+
 ```bash
-db-cli rollback
+db-cli  rollback
 ```
+
 - ⏪ This undoes the last set of migrations applied.
+
+**Example:**
+```bash
+# Rolling back the last batch migrations
+db-cli rollback
+
+# Output:
+# Rollback: 2024_08_09_13_59_01_create_users_table
+```
 ### Commands
 #### `setup`
 Initializes the migration configuration by creating the `config/migration.js` file in the current working directory. Configure the `migrationDir` and database settings in this file after running the command.
@@ -93,7 +171,7 @@ db-cli  rollback
 ## Configuration
 
 After running `db-cli setup`, you will have a `config/migration.js` file in your project. You'll need to edit this file to specify your migration directory and database connection settings. Here's how:
-```json
+```javascript
 module.exports = {
   migrationDir: 'migrations',  // Directory where migration files are stored
 
