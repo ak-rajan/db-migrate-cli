@@ -87,7 +87,7 @@ db-cli  make:migration <migration_name>
 db-cli make:migration create_users_table
 
 # Output:
-# Migration file created: migrations/2024_08_09_13_59_01_create_users_table.sql
+# Migration file created: 2024_08_09_13_59_01_create_users_table.sql
 ```
 
 **Anatomy of a Migration File:**
@@ -121,8 +121,8 @@ db-cli  migrate
 db-cli migrate
 
 # Output:
-# Migrating: 2024_08_09_13_59_01_create_users_table
-# Migrated: 2024_08_09_13_59_01_create_users_table
+# Migrating: 2024_08_09_13_59_01_create_users_table.sql
+# Migrated: 2024_08_09_13_59_01_create_users_table.sql
 ```
 #### **5. Rollback Changes**
 Made a mistake? No problem! Rollback the last batch of changes.
@@ -139,7 +139,7 @@ db-cli  rollback
 db-cli rollback
 
 # Output:
-# Rollback: 2024_08_09_13_59_01_create_users_table
+# Rollback: 2024_08_09_13_59_01_create_users_table.sql
 ```
 ### Commands
 #### `setup`
