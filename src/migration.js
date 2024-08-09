@@ -56,17 +56,16 @@ class Migration {
 
   // Run a single migration file
   async runMigration(file, batch) {
-    const fileName = file.replace(".sql", "");
     const chalk = (await import("chalk")).default;
-    console.log(chalk.blue("Migrating: ") + fileName);
+    console.log(chalk.blue("Migrating: ") + file);
 
     const filePath = path.join(this.migrationsDir, file);
     const content = await fs.readFile(filePath, "utf8");
     const [upSql] = content.split("-- DOWN").map((part) => part.trim());
 
     await this.executeSql(upSql);
-    await migrationDal.addMigration(fileName, batch);
-    console.log(chalk.green("Migrated: ") + fileName);
+    await migrationDal.addMigration(file.replace(".sql", ""), batch);
+    console.log(chalk.green("Migrated: ") + file);
   }
 
   // Rollback a single migration
@@ -81,7 +80,7 @@ class Migration {
     if (downSql) {
       await this.executeSql(downSql);
       await migrationDal.deleteMigration(migration.id);
-      console.log(chalk.blue("Rollback: ") + migration.migration);
+      console.log(chalk.blue("Rollback: ") + file);
     } else {
       throw new Error(`No DOWN part found for migration ${file}`);
     }
@@ -141,6 +140,7 @@ class Migration {
 
   // Create a new migration file
   createMigrationFile = async (name) => {
+    const chalk = (await import("chalk")).default;
     const now = new Date();
     const timestamp = [
       now.getFullYear(),
@@ -167,7 +167,6 @@ class Migration {
     });
 
     if (fileExists) {
-      const chalk = (await import("chalk")).default;
       console.error(chalk.red(`Migration file already exists: ${baseName}`));
       return;
     }
@@ -181,6 +180,7 @@ class Migration {
 `;
 
     await fs.writeFile(filePath, content.trim());
+    console.log(chalk.green(`Migration file created: ${fileName}`));
   };
 }
 
