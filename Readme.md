@@ -3,11 +3,11 @@
 [![npm](https://badgen.net/npm/v/db-migrate-cli)](https://www.npmjs.com/package/db-migrate-cli)
 [![npm](https://badgen.net/npm/license/db-migrate-cli)](https://www.npmjs.com/package/db-migrate-cli)
 
-**db-migrate-cli** is a command-line interface tool designed for managing database migrations with MySQL and MariaDB. It simplifies the process of creating, applying, and rolling back database changes using SQL files containing actual SQL queries.
+**db-migrate-cli** is a command-line tool for managing database migrations with MySQL and MariaDB. It simplifies creating, applying, and rolling back database changes using SQL files.
 
 ## Tested With
 
-This package has been tested with Node.js version 20.10.0 or greater.
+- Node.js 20.10.0 or greater
 
 ## Table of Contents
 -   [Installation](#installation)
@@ -15,23 +15,18 @@ This package has been tested with Node.js version 20.10.0 or greater.
     -   [Quick Start](#quick-start)
     -   [SQL-Based Migrations](#sql-based-migrations)
     -   [Commands](#commands)
-        -   [setup](#setup)
-        -   [migrate:init](#migrateinit)
-        -   [make:migration](#makemigration)
-        -   [migrate](#migrate)
-        -   [rollback](#rollback)
 -   [Configuration](#configuration)
 -   [Dependencies](#dependencies)
 -   [License](#license)
 -   [Author](#author)
+
 ## Installation
-To install the tool globally, use npm:
+Install globally via npm:
 
 ```bash
-npm  install  -g  db-migrate-cli
+npm install -g db-migrate-cli
 ```
-This will make the `db-cli` command available globally on your system, allowing you to run migration commands from anywhere.
-
+This makes the `db-cli` command available system-wide.
 
 ## Usage
 
@@ -39,36 +34,29 @@ This will make the `db-cli` command available globally on your system, allowing 
 Get up and running with `db-migrate-cli` in just a few simple steps! Here's how you can manage your database migrations like a pro.
 
 #### **1. Setup Your Migration Configuration**
-Kickstart your migration process by setting up the configuration file.
-
 ```bash
-db-cli  setup
+db-cli setup
 ```
 
-- 📝 This creates the `config/migration.js` file in your project.
-- 🔧 Customize the `migrationDir` and your database settings in this file.
+- 📝 Creates `config/migration.js`.
+- 🔧 Customize `migrationDir` and database settings in this file.
 
 **Example:**
 ```bash
-# Setting up the migration configuration
 db-cli setup
 
 # Output:
 # Configuration file created at config/migration.js
 ```
 #### **2. Initialize Migration Infrastructure**
-Prepare your database for migrations by setting up the necessary tables and procedures.
-
 ```bash
-db-cli  migrate:init
+db-cli migrate:init
 ```
 
-- 🚀 This creates a `db_migrations` table in your configured database.
-- ⚙️ Also sets up essential stored procedures to manage your migrations.
+- ⚙️ Creates `db_migrations` table and necessary stored procedures in your database.
 
 **Example:**
 ```bash
-# Initializing the migration infrastructure
 db-cli migrate:init
 
 # Output:
@@ -77,24 +65,51 @@ db-cli migrate:init
 ```
 
 #### **3. Create Your First Migration**
-Ready to make some changes? Create a new migration file with your desired changes in raw SQL.
-
 ```bash
-db-cli  make:migration <migration_name>
+db-cli make:migration <migration_name>
 ```
 
-- 📁 The file is stored in the directory specified by `migrationDir`.
-- ⏰ The file name includes a timestamp and is in snake case.
-- 🛠️ The migration file will include sections for both applying and rolling back changes using actual SQL queries.
+- 📁 Creates a migration file in `migrationDir` with a timestamp and name in snake case.
 
 **Example:**
 ```bash
-# Creating a new migration file
 db-cli make:migration create_users_table
 
 # Output:
 # Migration file created: 2024_08_09_13_59_01_create_users_table.sql
 ```
+#### **4. Apply Migrations**
+```bash
+db-cli migrate
+```
+
+- ✅ Executes all pending migrations.
+
+**Example:**
+```bash
+db-cli migrate
+
+# Output:
+# Migrating: 2024_08_09_13_59_01_create_users_table.sql
+# Migrated: 2024_08_09_13_59_01_create_users_table.sql
+```
+#### **5. Rollback Changes**
+```bash
+db-cli rollback
+```
+
+- ⏪ Reverts the most recent batch of migrations.
+
+**Example:**
+```bash
+db-cli rollback
+
+# Output:
+# Rollback: 2024_08_09_13_59_01_create_users_table.sql
+```
+### SQL-Based Migrations
+
+**db-migrate-cli** uses SQL files for migrations, with UP for applying changes and DOWN for rolling back. This gives you full control over the SQL executed. 
 
 **Anatomy of a Migration File:**
 ```sql
@@ -110,98 +125,38 @@ CREATE TABLE users (
 -- DOWN
 DROP TABLE users;
 ```
-This migration file contains the SQL commands necessary to create a `users` table in the database. The `-- UP` section includes the SQL to apply the changes, and the `-- DOWN` section provides the SQL to undo them.
 
-#### **4. Apply Migrations**
-Time to execute your changes! Run all pending migrations to update your database.
-
-```bash
-db-cli  migrate
-```
-
-- ✅ This applies all the migrations that haven't been executed yet.
-
-**Example:**
-```bash
-# Applying all pending migrations
-db-cli migrate
-
-# Output:
-# Migrating: 2024_08_09_13_59_01_create_users_table.sql
-# Migrated: 2024_08_09_13_59_01_create_users_table.sql
-```
-#### **5. Rollback Changes**
-Made a mistake? No problem! Rollback the last batch of changes.
-
-```bash
-db-cli  rollback
-```
-
-- ⏪ This undoes the last set of migrations applied.
-
-**Example:**
-```bash
-# Rolling back the last batch migrations
-db-cli rollback
-
-# Output:
-# Rollback: 2024_08_09_13_59_01_create_users_table.sql
-```
-### SQL-Based Migrations
-
-The **db-migrate-cli** tool utilizes SQL files containing actual SQL queries for both migrating changes to your database and rolling them back. Each migration file is written in SQL and includes two sections:
+Each migration file is written in SQL and includes two sections:
 
 - **UP**: Contains the SQL commands that apply the changes (e.g., creating tables, adding columns).
 - **DOWN**: Contains the SQL commands that reverse the changes (e.g., dropping tables, removing columns).
 
-This approach allows you to have full control over the exact SQL that is executed during both the migration and rollback processes.
-
-**Example Migration File:**
-```sql
--- migrations/2024_08_09_13_59_01_create_users_table.sql
-
--- UP
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    age INT
-);
-
--- DOWN
-DROP TABLE users;
-```
-By managing migrations with raw SQL, you ensure that your database schema is modified precisely as needed, without any abstraction layers.
+This approach gives you precise control over the SQL executed during migration and rollback processes. By using raw SQL for migrations, you directly manage your database schema changes without abstraction layers.
 
 ### Commands
-#### `setup`
-Initializes the migration configuration by creating the `config/migration.js` file in the current working directory. Configure the `migrationDir` and database settings in this file after running the command.
+- `setup`: Initializes migration configuration.
 ```bash
-db-cli  setup
+db-cli setup
 ```
-#### `migrate:init`
-Sets up the migration infrastructure by creating the `db_migrations` table in your configured database and establishing the necessary stored procedures.
+- `migrate:init`: Sets up migration infrastructure in the database.
 ```bash
-db-cli  migrate:init
+db-cli migrate:init
 ```
-#### `make:migration`
-Generates a new migration file within the `migrationDir` specified in `config/migration.js`. The file name includes a timestamp and the provided name, converted to snake case.
+- `make:migration <migration_name>`: Creates a new migration file.
 ```bash
-db-cli  make:migration <migration_name>
+db-cli make:migration <migration_name>
 ```
-#### `migrate`
-Executes all pending migrations, applying them to the configured database.
+- `migrate`: Applies all pending migrations.
 ```bash
-db-cli  migrate
+db-cli migrate
 ```
-#### `rollback`
-Reverts the most recent batch of migrations, undoing the last changes applied.
+- `rollback`: Reverts the most recent migrations.
 ```bash
-db-cli  rollback
+db-cli rollback
 ```
 
 ## Configuration
-
-After running `db-cli setup`, you will have a `config/migration.js` file in your project. You'll need to edit this file to specify your migration directory and database connection settings. Here's how:
+Edit `config/migration.js` after running `db-cli setup`:
 ```javascript
 module.exports = {
   migrationDir: 'migrations',  // Directory where migration files are stored
@@ -216,18 +171,6 @@ module.exports = {
   }
 };
 ```
-### Configuration Options:
-
--   **`migrationDir`**: The directory where your migration files will be stored. This is where new migration files created with `db-cli make:migration` will be saved.
-    
--   **`db` Object**: Contains your database connection settings:
-    
-    -   **`host`**: The hostname of your database server.
-    -   **`user`**: The username used to connect to the database.
-    -   **`password`**: The password associated with the database user.
-    -   **`database`**: The name of the database where migrations will be applied.
-    -   **`port`**: (Optional) The port on which your database server is listening. Defaults to `3306` for MySQL/MariaDB.
-
 ## Dependencies
 
 -  `chalk`: Used for styling terminal output.
@@ -238,7 +181,7 @@ module.exports = {
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License
 
 ## Author
 
