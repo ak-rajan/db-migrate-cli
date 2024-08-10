@@ -14,11 +14,24 @@
     "rollback": "node src/bin/cli.js rollback"
   },
   "keywords": [
-    "cli",
-    "migration",
     "database",
+    "migration",
+    "migrate",
+    "rollback",
+    "db-migrate",
+    "sql",
     "mysql",
-    "mariadb"
+    "mariadb",
+    "cli",
+    "command-line",
+    "sql-migrations",
+    "schema-migration",
+    "database-management",
+    "db-cli",
+    "migration-tool",
+    "nodejs",
+    "database-changes",
+    "db-rollback"
   ],
   "author": "Anjutech <arunkumar@anjutech.com>",
   "license": "MIT",
