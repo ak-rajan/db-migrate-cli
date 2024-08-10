@@ -5,6 +5,10 @@
 
 **db-migrate-cli** is a command-line interface tool designed for managing database migrations with MySQL and MariaDB. It simplifies the process of creating, applying, and rolling back database changes using SQL files containing actual SQL queries.
 
+## Tested With
+
+This package has been tested with Node.js version 20.10.0 or greater.
+
 ## Table of Contents
 -   [Installation](#installation)
 -   [Usage](#usage)
