@@ -3,13 +3,13 @@
 [![npm](https://badgen.net/npm/v/db-migrate-cli)](https://www.npmjs.com/package/db-migrate-cli)
 [![npm](https://badgen.net/npm/license/db-migrate-cli)](https://www.npmjs.com/package/db-migrate-cli)
 
-
-**db-migrate-cli** is a command-line interface tool designed for managing database migrations with MySQL and MariaDB. It simplifies the process of creating, applying, and rolling back database changes.
+**db-migrate-cli** is a command-line interface tool designed for managing database migrations with MySQL and MariaDB. It simplifies the process of creating, applying, and rolling back database changes using SQL files containing actual SQL queries.
 
 ## Table of Contents
 -   [Installation](#installation)
 -   [Usage](#usage)
     -   [Quick Start](#quick-start)
+    -   [SQL-Based Migrations](#sql-based-migrations)
     -   [Commands](#commands)
         -   [setup](#setup)
         -   [migrate:init](#migrateinit)
@@ -73,7 +73,7 @@ db-cli migrate:init
 ```
 
 #### **3. Create Your First Migration**
-Ready to make some changes? Create a new migration file with your desired changes.
+Ready to make some changes? Create a new migration file with your desired changes in raw SQL.
 
 ```bash
 db-cli  make:migration <migration_name>
@@ -81,6 +81,7 @@ db-cli  make:migration <migration_name>
 
 - 📁 The file is stored in the directory specified by `migrationDir`.
 - ⏰ The file name includes a timestamp and is in snake case.
+- 🛠️ The migration file will include sections for both applying and rolling back changes using actual SQL queries.
 
 **Example:**
 ```bash
@@ -142,6 +143,31 @@ db-cli rollback
 # Output:
 # Rollback: 2024_08_09_13_59_01_create_users_table.sql
 ```
+### SQL-Based Migrations
+
+The **db-migrate-cli** tool utilizes SQL files containing actual SQL queries for both migrating changes to your database and rolling them back. Each migration file is written in SQL and includes two sections:
+
+- **UP**: Contains the SQL commands that apply the changes (e.g., creating tables, adding columns).
+- **DOWN**: Contains the SQL commands that reverse the changes (e.g., dropping tables, removing columns).
+
+This approach allows you to have full control over the exact SQL that is executed during both the migration and rollback processes.
+
+**Example Migration File:**
+```sql
+-- migrations/2024_08_09_13_59_01_create_users_table.sql
+
+-- UP
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INT
+);
+
+-- DOWN
+DROP TABLE users;
+```
+By managing migrations with raw SQL, you ensure that your database schema is modified precisely as needed, without any abstraction layers.
+
 ### Commands
 #### `setup`
 Initializes the migration configuration by creating the `config/migration.js` file in the current working directory. Configure the `migrationDir` and database settings in this file after running the command.
