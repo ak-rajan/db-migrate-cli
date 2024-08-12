@@ -12,7 +12,6 @@ DROP PROCEDURE IF EXISTS `addMigration`;
 DROP PROCEDURE IF EXISTS `deleteMigration`;
 DROP PROCEDURE IF EXISTS `getLastBatchMigrations`;
 DROP PROCEDURE IF EXISTS `getMigrations`;
-DROP PROCEDURE IF EXISTS `executeQuery`;
 
 -- Create stored procedures
 CREATE PROCEDURE `addMigration`(
@@ -49,26 +48,4 @@ CREATE PROCEDURE `getMigrations`()
 BEGIN
     SELECT id, migration, batch
     FROM db_migrations;
-END;
-
-CREATE PROCEDURE `executeQuery`(
-    IN `p_sql_query` LONGTEXT,
-    OUT `p_status` LONGTEXT
-)
-BEGIN
-    DECLARE stmt LONGTEXT;
-
-    -- Declare a handler for SQL exceptions
-    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
-    BEGIN
-        DECLARE v_error_message VARCHAR(255);
-        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
-        SET p_status = CONCAT('Error: ', v_error_message);
-    END;
-
-    SET p_status = 'Success';
-    SET stmt = p_sql_query;
-    PREPARE dynamic_stmt FROM stmt;
-    EXECUTE dynamic_stmt;
-    DEALLOCATE PREPARE dynamic_stmt;
 END;

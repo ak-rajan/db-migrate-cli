@@ -1,4 +1,3 @@
-const path = require("path");
 const mysql = require("mysql2/promise");
 const loadConfig = require("./config-loader");
 
@@ -9,52 +8,42 @@ class Database {
     }
 
     const { database } = loadConfig("config/migration.js");
-    this.pool = null;
-    this.poolConfig = {
+    this.connection = null;
+    this.connectionConfig = {
       host: database.host,
       user: database.user,
       password: database.password,
       database: database.database,
       port: database.port,
-      connectionLimit: 1,
       multipleStatements: true,
     };
-
-    this.connected = false;
 
     Database.instance = this;
   }
 
   connect = async () => {
-    if (!this.pool) {
+    if (!this.connection) {
       try {
-        this.pool = mysql.createPool(this.poolConfig);
-        this.connected = true;
+        this.connection = await mysql.createConnection(this.connectionConfig);
       } catch (err) {
-        console.error("Error creating connection pool:", err);
+        console.error("Error creating connection:", err);
         throw err;
       }
     }
   };
 
   getConnection = async () => {
-    if (!this.connected) {
+    if (!this.connection) {
       await this.connect();
     }
-    try {
-      const connection = await this.pool.getConnection();
-      return connection;
-    } catch (err) {
-      console.error("Error getting connection from pool:", err);
-      throw err;
-    }
+
+    return this.connection;
   };
 
   close = async () => {
-    if (this.pool) {
-      await this.pool.end();
-      this.pool = null;
-      this.connected = false;
+    if (this.connection) {
+      await this.connection.end();
+      this.connection = null;
     }
   };
 }

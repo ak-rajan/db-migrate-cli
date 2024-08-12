@@ -12,10 +12,21 @@ class BaseDAL {
       console.error("Error executing database operation:", error);
       throw error;
     } finally {
-      if (connection) {
-        connection.release();
-      }
       database.close();
+    }
+  };
+
+  executeScript = async (script) => {
+    try {
+      return await this.withConnection(async (connection) => {
+        await connection.beginTransaction();
+        await connection.query(script);
+        await connection.commit();
+
+        return "Success";
+      });
+    } catch (err) {
+      throw err;
     }
   };
 

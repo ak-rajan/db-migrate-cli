@@ -7,19 +7,10 @@ class CoreDAL extends BaseDAL {
 
   executeQuery = async (sqlQuery) => {
     try {
-      const result = await this.executeStoredProcedureWithOutParams(
-        "executeQuery",
-        [sqlQuery],
-        ["status"]
-      );
-
-      const { status } = result;
-      return status;
+      return await this.executeScript(sqlQuery);
     } catch (err) {
-      console.log(err);
+      return err.message;
     }
-
-    return "Failure";
   };
 }
 
