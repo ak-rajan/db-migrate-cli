@@ -50,7 +50,7 @@ class Migration {
     if (status !== "Success") {
       const chalk = (await import("chalk")).default;
       console.error(chalk.red(status));
-      process.exit(1); // Exit with failure status code
+      process.exit(1);
     }
   };
 
@@ -74,6 +74,13 @@ class Migration {
 
     const file = `${migration.migration}.sql`;
     const filePath = path.join(this.migrationsDir, file);
+    try {
+      await fs.access(filePath);
+    } catch (err) {
+      console.error(chalk.red(`Migration file not found: ${file}`));
+      return;
+    }
+
     const content = await fs.readFile(filePath, "utf8");
     const [, downSql] = content.split("-- DOWN").map((part) => part.trim());
 
