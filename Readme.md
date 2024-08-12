@@ -61,7 +61,7 @@ db-cli migrate:init
 
 # Output:
 # Migration infrastructure initialized. 'db_migrations' table created.
-# Procedures 'addMigration', 'deleteMigration', 'executeQuery', 'getLastBatchMigrations', and 'getMigrations' created.
+# Procedures 'addMigration', 'deleteMigration', 'getLastBatchMigrations', and 'getMigrations' created.
 ```
 
 #### **3. Create Your First Migration**

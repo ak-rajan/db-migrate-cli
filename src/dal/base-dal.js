@@ -9,7 +9,7 @@ class BaseDAL {
       connection = await database.getConnection();
       return await callback(connection);
     } catch (error) {
-      console.error("Error executing database operation:", error);
+      // console.error("Error executing database operation:", error);
       throw error;
     } finally {
       database.close();
