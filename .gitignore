@@ -1,6 +1,7 @@
 # Project
 /config/
 /migrations/
+/database/
 
 # Logs
 logs

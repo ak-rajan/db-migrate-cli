@@ -7,7 +7,7 @@ class Database {
       return Database.instance;
     }
 
-    const { database } = loadConfig("config/migration.js");
+    const { database } = loadConfig("database/config.js");
     this.connection = null;
     this.connectionConfig = {
       host: database.host,

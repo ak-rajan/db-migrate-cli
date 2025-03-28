@@ -1,5 +1,5 @@
 module.exports = {
-  migrationsDir: "migrations",
+  migrationsDir: "database/migrations",
   database: {
     host: "localhost",
     user: "user",

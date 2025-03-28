@@ -9,7 +9,7 @@ const database = require("./database");
 
 class Migration {
   constructor() {
-    const config = loadConfig("config/migration.js");
+    const config = loadConfig("database/config.js");
     this.migrationsDir = path.join(process.cwd(), config.migrationsDir);
     this.database = config.database;
   }

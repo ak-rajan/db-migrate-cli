@@ -38,7 +38,7 @@ Get up and running with `db-migrate-cli` in just a few simple steps! Here's how 
 db-cli setup
 ```
 
-- 📝 Creates `config/migration.js`.
+- 📝 Creates `database/config.js`.
 - 🔧 Customize `migrationDir` and database settings in this file.
 
 **Example:**
@@ -46,7 +46,7 @@ db-cli setup
 db-cli setup
 
 # Output:
-# Configuration file created at config/migration.js
+# Configuration file created at database/config.js
 ```
 #### **2. Initialize Migration Infrastructure**
 ```bash
@@ -156,10 +156,10 @@ db-cli rollback
 ```
 
 ## Configuration
-Edit `config/migration.js` after running `db-cli setup`:
+Edit `database/config.js` after running `db-cli setup`:
 ```javascript
 module.exports = {
-  migrationDir: 'migrations',  // Directory where migration files are stored
+  migrationDir: 'database/migrations',  // Directory where migration files are stored
 
   // Database connection settings
   db: {

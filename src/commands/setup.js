@@ -6,7 +6,7 @@ const configTemplatePath = path.join(
   __dirname,
   "../config/migration.template.js"
 );
-const userConfigPath = path.join(process.cwd(), "config/migration.js");
+const userConfigPath = path.join(process.cwd(), "database/config.js");
 
 const setupCommand = new Command("setup")
   .description("Create migration config.")
