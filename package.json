@@ -1,6 +1,6 @@
 {
   "name": "db-migrate-cli",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "A CLI tool for managing database migrations",
   "main": "index.js",
   "bin": {
