@@ -133,6 +133,35 @@ Each migration file is written in SQL and includes two sections:
 
 This approach gives you precise control over the SQL executed during migration and rollback processes. By using raw SQL for migrations, you directly manage your database schema changes without abstraction layers.
 
+#### Advanced Features
+
+ - **Multiple statements** under `-- UP` and `-- DOWN` are supported.
+ - Recognizes and properly handles custom **delimiters** like `DELIMITER $$` — ideal for stored procedures and complex routines.
+ - Correctly splits SQL blocks while preserving body content inside `BEGIN ... END` or `CREATE PROCEDURE`.
+ - Each executed statement is tracked by **line number**, enabling targeted rollbacks.
+
+**Example: Migration with Delimiters**
+```sql
+-- UP
+DELIMITER $$
+
+CREATE PROCEDURE sp_log_error(
+    IN request_id INT,
+    IN message TEXT
+)
+BEGIN
+    INSERT INTO error_logs (request_id, message, created_at)
+    VALUES (request_id, message, NOW());
+END$$
+
+DELIMITER ;
+
+-- DOWN
+DROP PROCEDURE IF EXISTS sp_log_error;
+```
+This ensures your stored routines are executed correctly without getting split or malformed during parsing.
+
+
 ### Commands
 - `setup`: Initializes migration configuration.
 ```bash

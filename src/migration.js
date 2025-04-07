@@ -61,9 +61,38 @@ class Migration {
 
     const filePath = path.join(this.migrationsDir, file);
     const content = await fs.readFile(filePath, "utf8");
-    const [upSql] = content.split("-- DOWN").map((part) => part.trim());
+    const { sql: upSql, startLine: upStartLine } = this.parseUpBlock(content);
 
-    await this.executeSql(upSql);
+    const statements = this.splitSqlStatements(upSql, upStartLine - 1);
+    if (statements.length > 0)
+      for (let i = 0; i < statements.length; i++) {
+        const { sql, startLine, endLine } = statements[i];
+        const preview = sql.substring(0, 80).replace(/\s+/g, " ");
+        const isProcedure = /CREATE\s+(PROCEDURE|FUNCTION)/i.test(sql);
+
+        const rangeText = `(lines ${startLine}-${endLine})`;
+
+        if (isProcedure) {
+          console.log(
+            chalk.cyan(
+              `Stored routine ${i + 1}/${statements.length} ${rangeText}:`
+            ) +
+              " " +
+              chalk.gray(preview + "...")
+          );
+        } else {
+          console.log(
+            chalk.yellow(
+              `Statement ${i + 1}/${statements.length} ${rangeText}:`
+            ) +
+              " " +
+              chalk.gray(preview + "...")
+          );
+        }
+
+        await this.executeSql(sql);
+      }
+
     await migrationDal.addMigration(file.replace(".sql", ""), batch);
     console.log(chalk.green("Migrated: ") + file);
   }
@@ -82,15 +111,30 @@ class Migration {
     }
 
     const content = await fs.readFile(filePath, "utf8");
-    const [, downSql] = content.split("-- DOWN").map((part) => part.trim());
+    const { sql: downSql, startLine: downStartLine } =
+      this.parseDownBlock(content);
 
-    if (downSql) {
-      await this.executeSql(downSql);
-      await migrationDal.deleteMigration(migration.id);
-      console.log(chalk.blue("Rollback: ") + file);
-    } else {
-      throw new Error(`No DOWN part found for migration ${file}`);
+    const statements = this.splitSqlStatements(downSql, downStartLine - 1);
+
+    if (statements.length === 0) {
+      throw new Error(`No valid SQL found in DOWN for migration ${file}`);
     }
+
+    if (statements.length === 1) {
+      await this.executeSql(statements[0].sql);
+    } else {
+      for (const stmt of statements) {
+        console.log(
+          chalk.gray(
+            `Rolling back lines ${stmt.startLine}-${stmt.endLine} in ${file}...`
+          )
+        );
+        await this.executeSql(stmt.sql);
+      }
+    }
+
+    await migrationDal.deleteMigration(migration.id);
+    console.log(chalk.blue("Rollback: ") + file);
   }
 
   // Run all pending migrations
@@ -188,6 +232,101 @@ class Migration {
 
     await fs.writeFile(filePath, content.trim());
     console.log(chalk.green(`Migration file created: ${fileName}`));
+  };
+
+  parseUpBlock = (content) => {
+    const lines = content.split(/\r?\n/);
+    const upIndex = lines.findIndex((line) => line.trim() === "-- UP");
+
+    if (upIndex === -1) {
+      throw new Error("Missing '-- UP' section.");
+    }
+
+    const downIndex = lines.findIndex(
+      (line, i) => line.trim() === "-- DOWN" && i > upIndex
+    );
+
+    const upLines =
+      downIndex !== -1
+        ? lines.slice(upIndex + 1, downIndex)
+        : lines.slice(upIndex + 1);
+
+    return {
+      sql: upLines.join("\n").trim(),
+      startLine: upIndex + 2,
+    };
+  };
+
+  parseDownBlock = (content) => {
+    const lines = content.split(/\r?\n/);
+    const downIndex = lines.findIndex((line) => line.trim() === "-- DOWN");
+
+    if (downIndex === -1) {
+      throw new Error("Missing '-- DOWN' section.");
+    }
+
+    const upIndex = lines.findIndex(
+      (line, i) => line.trim() === "-- UP" && i > downIndex
+    );
+
+    const downLines =
+      upIndex !== -1
+        ? lines.slice(downIndex + 1, upIndex)
+        : lines.slice(downIndex + 1);
+
+    return {
+      sql: downLines.join("\n").trim(),
+      startLine: downIndex + 2,
+    };
+  };
+
+  splitSqlStatements = (content, startLineOffset = 0) => {
+    const lines = content.split(/\r?\n/);
+    const statements = [];
+    let current = [];
+    let currentStartLine = 0;
+    let delimiter = ";";
+
+    const delimiterRegex = /^DELIMITER\s+(.+)$/i;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      const match = line.match(delimiterRegex);
+      if (match) {
+        delimiter = match[1];
+        continue;
+      }
+
+      if (current.length === 0 && line.trim() === "") {
+        continue; // skip blank lines between statements
+      }
+
+      if (current.length === 0) {
+        currentStartLine = i; // first non-blank line in this statement
+      }
+
+      current.push(line);
+
+      if (line.trim().endsWith(delimiter)) {
+        const sql = current.join("\n").trim();
+
+        if (sql) {
+          statements.push({
+            sql: sql.slice(0, -delimiter.length).trim(), // remove delimiter
+            startLine: currentStartLine + 1 + startLineOffset,
+            endLine: i + 1 + startLineOffset,
+          });
+        }
+
+        current = [];
+        currentStartLine = i + 1;
+      } else if (current.length === 1) {
+        currentStartLine = i;
+      }
+    }
+
+    return statements;
   };
 }
 
