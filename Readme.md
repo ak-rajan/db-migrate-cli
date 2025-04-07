@@ -115,10 +115,10 @@ db-cli migrate
 
 # Output (Multiple SQL Statements in `-- UP`)
 # Migrating: 2025_04_04_06_16_45_create_common_crud_procedures.sql
-# Stored 1/4 lines  4–20: CREATE PROCEDURE insert_record_into_table(
-# Stored 2/4 lines 22–37: CREATE PROCEDURE update_table_record(
-# Stored 3/4 lines 39–53: CREATE PROCEDURE delete_record_from_table(
-# Stored 4/4 lines 55–71: CREATE PROCEDURE select_records_from_table(
+# Statement 1/4 lines  4–20: CREATE PROCEDURE insert_record_into_table(
+# Statement 2/4 lines 22–37: CREATE PROCEDURE update_table_record(
+# Statement 3/4 lines 39–53: CREATE PROCEDURE delete_record_from_table(
+# Statement 4/4 lines 55–71: CREATE PROCEDURE select_records_from_table(
 # Migrated: 2025_04_04_06_16_45_create_common_crud_procedures.sql
 ```
 
@@ -141,10 +141,10 @@ db-cli rollback
 
 # Output (Multiple SQL Statements in `-- DOWN`):
 # Rolling back: 2025_04_04_06_16_45_create_common_crud_procedures.sql
-# Stored 1/4  line  77: DROP PROCEDURE IF EXISTS insert_record_into_table
-# Stored 2/4  line  78: DROP PROCEDURE IF EXISTS update_table_record
-# Stored 3/4  line  79: DROP PROCEDURE IF EXISTS delete_record_from_table
-# Stored 4/4  line  80: DROP PROCEDURE IF EXISTS select_records_from_table
+# Statement 1/4  line  77: DROP PROCEDURE IF EXISTS insert_record_into_table
+# Statement 2/4  line  78: DROP PROCEDURE IF EXISTS update_table_record
+# Statement 3/4  line  79: DROP PROCEDURE IF EXISTS delete_record_from_table
+# Statement 4/4  line  80: DROP PROCEDURE IF EXISTS select_records_from_table
 # Rolled back: 2025_04_04_06_16_45_create_common_crud_procedures.sql
 ```
 
