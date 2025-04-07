@@ -17,6 +17,7 @@
     "database",
     "db",
     "migrate",
+    "rollback",
     "migration",
     "migrations",
     "mysql",

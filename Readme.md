@@ -3,6 +3,13 @@
 [![npm](https://badgen.net/npm/v/db-migrate-cli)](https://www.npmjs.com/package/db-migrate-cli)
 [![npm](https://badgen.net/npm/license/db-migrate-cli)](https://www.npmjs.com/package/db-migrate-cli)
 
+> 💡 **Quick Install:**  
+> Install globally with **npm** to start managing MySQL/MariaDB migrations easily.
+
+```bash
+npm install -g db-migrate-cli
+```
+
 **db-migrate-cli** is a command-line tool for managing database migrations with MySQL and MariaDB. It simplifies creating, applying, and rolling back database changes using SQL files.
 
 ## Tested With
