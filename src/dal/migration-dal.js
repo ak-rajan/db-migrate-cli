@@ -8,7 +8,7 @@ class MigrationDAL extends BaseDAL {
 
   addMigration = async (migration, batch) => {
     try {
-      const result = await this.executeStoredProcedure("addMigration", [
+      const result = await this.executeStoredProcedure("db_cli_add_migration", [
         migration,
         batch,
       ]);
@@ -23,7 +23,7 @@ class MigrationDAL extends BaseDAL {
 
   deleteMigration = async (migrationId) => {
     try {
-      const result = await this.executeStoredProcedure("deleteMigration", [
+      const result = await this.executeStoredProcedure("db_cli_delete_migration", [
         migrationId,
       ]);
 
@@ -37,7 +37,7 @@ class MigrationDAL extends BaseDAL {
 
   getMigrations = async () => {
     try {
-      const result = await this.executeStoredProcedure("getMigrations");
+      const result = await this.executeStoredProcedure("db_cli_get_migrations");
       if (this.hasResponse(result)) {
         const migrations = result[0].map(({ id, migration, batch }) => {
           const migrationModel = new Migration();
@@ -60,7 +60,7 @@ class MigrationDAL extends BaseDAL {
   getLastBatchMigrations = async () => {
     try {
       const result = await this.executeStoredProcedure(
-        "getLastBatchMigrations"
+        "db_cli_get_last_batch_migrations"
       );
       if (this.hasResponse(result)) {
         const migrations = result[0].map(({ id, migration, batch }) => {

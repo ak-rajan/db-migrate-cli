@@ -54,55 +54,67 @@ class Migration {
     }
   };
 
-  // Run a single migration file
-  async runMigration(file, batch) {
+  processStatements = async (statements, chalk) => {
+    const totalDigits = statements.length.toString().length;
+    const shouldLog = statements.length > 1;
+
+    for (let i = 0; i < statements.length; i++) {
+      const { sql, startLine, endLine } = statements[i];
+
+      if (shouldLog) {
+        const firstLine = sql.trim().split(/\r?\n/)[0] || "";
+        const preview =
+          firstLine.length > 80
+            ? firstLine.substring(0, 80).replace(/\s+/g, " ") + "..."
+            : firstLine.replace(/\s+/g, " ");
+
+        const rangeText =
+          startLine === endLine
+            ? `line  ${startLine.toString().padStart(2)}`
+            : `lines ${startLine.toString().padStart(2)}-${endLine
+                .toString()
+                .padStart(2)}`;
+
+        const statementIndex = `${(i + 1).toString().padStart(totalDigits)}/${
+          statements.length
+        }`;
+
+        console.log(
+          chalk.cyan(`Statement ${statementIndex}`) +
+            chalk.dim(` ${rangeText}: `) +
+            chalk.gray(preview)
+        );
+      }
+
+      await this.executeSql(sql);
+    }
+  };
+
+  runMigration = async (file, batch) => {
     const chalk = (await import("chalk")).default;
-    console.log(chalk.blue("Migrating: ") + file);
+    console.log(chalk.bold.blueBright("Migrating: ") + chalk.whiteBright(file));
 
     const filePath = path.join(this.migrationsDir, file);
     const content = await fs.readFile(filePath, "utf8");
     const { sql: upSql, startLine: upStartLine } = this.parseUpBlock(content);
 
     const statements = this.splitSqlStatements(upSql, upStartLine - 1);
-    if (statements.length > 0)
-      for (let i = 0; i < statements.length; i++) {
-        const { sql, startLine, endLine } = statements[i];
-        const preview = sql.substring(0, 80).replace(/\s+/g, " ");
-        const isProcedure = /CREATE\s+(PROCEDURE|FUNCTION)/i.test(sql);
-
-        const rangeText = `(lines ${startLine}-${endLine})`;
-
-        if (isProcedure) {
-          console.log(
-            chalk.cyan(
-              `Stored routine ${i + 1}/${statements.length} ${rangeText}:`
-            ) +
-              " " +
-              chalk.gray(preview + "...")
-          );
-        } else {
-          console.log(
-            chalk.yellow(
-              `Statement ${i + 1}/${statements.length} ${rangeText}:`
-            ) +
-              " " +
-              chalk.gray(preview + "...")
-          );
-        }
-
-        await this.executeSql(sql);
-      }
+    if (statements.length > 0) {
+      await this.processStatements(statements, chalk);
+    }
 
     await migrationDal.addMigration(file.replace(".sql", ""), batch);
-    console.log(chalk.green("Migrated: ") + file);
-  }
+    console.log(chalk.bold.greenBright("Migrated: ") + chalk.whiteBright(file));
+  };
 
-  // Rollback a single migration
-  async rollbackMigration(migration) {
+  rollbackMigration = async (migration) => {
     const chalk = (await import("chalk")).default;
-
     const file = `${migration.migration}.sql`;
     const filePath = path.join(this.migrationsDir, file);
+    console.log(
+      chalk.bold.blueBright("Rolling back: ") + chalk.whiteBright(file)
+    );
+
     try {
       await fs.access(filePath);
     } catch (err) {
@@ -115,30 +127,19 @@ class Migration {
       this.parseDownBlock(content);
 
     const statements = this.splitSqlStatements(downSql, downStartLine - 1);
-
     if (statements.length === 0) {
       throw new Error(`No valid SQL found in DOWN for migration ${file}`);
     }
 
-    if (statements.length === 1) {
-      await this.executeSql(statements[0].sql);
-    } else {
-      for (const stmt of statements) {
-        console.log(
-          chalk.gray(
-            `Rolling back lines ${stmt.startLine}-${stmt.endLine} in ${file}...`
-          )
-        );
-        await this.executeSql(stmt.sql);
-      }
-    }
-
+    await this.processStatements(statements, chalk);
     await migrationDal.deleteMigration(migration.id);
-    console.log(chalk.blue("Rollback: ") + file);
-  }
+    console.log(
+      chalk.bold.greenBright("Rolled back: ") + chalk.whiteBright(file)
+    );
+  };
 
   // Run all pending migrations
-  async runMigrations() {
+  runMigrations = async () => {
     const migrations = await migrationDal.getMigrations();
     const migratedFiles = migrations.map(
       (migration) => `${migration.migration}.sql`
@@ -167,10 +168,10 @@ class Migration {
         break;
       }
     }
-  }
+  };
 
   // Rollback all migrations from the last batch
-  async rollbackMigrations() {
+  rollbackMigrations = async () => {
     const chalk = (await import("chalk")).default;
     const migrations = await migrationDal.getLastBatchMigrations();
 
@@ -187,7 +188,7 @@ class Migration {
         break;
       }
     }
-  }
+  };
 
   // Create a new migration file
   createMigrationFile = async (name) => {
@@ -290,7 +291,8 @@ class Migration {
     const delimiterRegex = /^DELIMITER\s+(.+)$/i;
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+      const actualLine = lines[i];
+      const line = actualLine.trim();
 
       const match = line.match(delimiterRegex);
       if (match) {
@@ -298,7 +300,7 @@ class Migration {
         continue;
       }
 
-      if (current.length === 0 && line.trim() === "") {
+      if (current.length === 0 && line === "") {
         continue; // skip blank lines between statements
       }
 
@@ -306,9 +308,9 @@ class Migration {
         currentStartLine = i; // first non-blank line in this statement
       }
 
-      current.push(line);
+      current.push(actualLine);
 
-      if (line.trim().endsWith(delimiter)) {
+      if (line.endsWith(delimiter)) {
         const sql = current.join("\n").trim();
 
         if (sql) {

@@ -8,13 +8,13 @@ CREATE TABLE IF NOT EXISTS `db_migrations` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Drop existing procedures if they exist
-DROP PROCEDURE IF EXISTS `addMigration`;
-DROP PROCEDURE IF EXISTS `deleteMigration`;
-DROP PROCEDURE IF EXISTS `getLastBatchMigrations`;
-DROP PROCEDURE IF EXISTS `getMigrations`;
+DROP PROCEDURE IF EXISTS `db_cli_add_migration`;
+DROP PROCEDURE IF EXISTS `db_cli_delete_migration`;
+DROP PROCEDURE IF EXISTS `db_cli_get_last_batch_migrations`;
+DROP PROCEDURE IF EXISTS `db_cli_get_migrations`;
 
 -- Create stored procedures
-CREATE PROCEDURE `addMigration`(
+CREATE PROCEDURE `db_cli_add_migration`(
     IN `p_migration` VARCHAR(255),
     IN `p_batch` INT
 )
@@ -23,14 +23,14 @@ BEGIN
     VALUES (p_migration, p_batch);
 END;
 
-CREATE PROCEDURE `deleteMigration`(
+CREATE PROCEDURE `db_cli_delete_migration`(
     IN `p_node_migration_id` BIGINT(20)
 )
 BEGIN
     DELETE FROM db_migrations WHERE id = p_node_migration_id;
 END;
 
-CREATE PROCEDURE `getLastBatchMigrations`()
+CREATE PROCEDURE `db_cli_get_last_batch_migrations`()
 BEGIN
     DECLARE p_last_batch INT;
 
@@ -44,7 +44,7 @@ BEGIN
     ORDER BY id DESC;
 END;
 
-CREATE PROCEDURE `getMigrations`()
+CREATE PROCEDURE `db_cli_get_migrations`()
 BEGIN
     SELECT id, migration, batch
     FROM db_migrations;
