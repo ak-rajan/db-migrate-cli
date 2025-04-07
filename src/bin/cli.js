@@ -2,6 +2,9 @@
 const { program } = require("commander");
 const fs = require("fs");
 const path = require("path");
+const pkg = require("../../package.json");
+
+program.version(pkg.version);
 
 const commandsPath = path.resolve(__dirname, "../commands");
 fs.readdirSync(commandsPath).forEach((file) => {
