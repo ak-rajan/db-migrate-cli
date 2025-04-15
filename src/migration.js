@@ -118,8 +118,7 @@ class Migration {
     try {
       await fs.access(filePath);
     } catch (err) {
-      console.error(chalk.red(`Migration file not found: ${file}`));
-      return;
+      throw new Error(`Migration file not found: ${file}`);
     }
 
     const content = await fs.readFile(filePath, "utf8");
@@ -164,7 +163,7 @@ class Migration {
       try {
         await this.runMigration(file, newBatch);
       } catch (err) {
-        console.error("Error applying migration:", err);
+        console.error("Error applying migration:", err.message);
         break;
       }
     }
@@ -184,10 +183,37 @@ class Migration {
       try {
         await this.rollbackMigration(migration);
       } catch (err) {
-        console.error("Error rolling back migration:", err);
+        console.error(chalk.red(`${err.message}`));
         break;
       }
     }
+  };
+
+  // Rollback all applied migrations in reverse order
+  resetMigrations = async () => {
+    const chalk = (await import("chalk")).default;
+    const allMigrations = await migrationDal.getMigrations();
+
+    if (allMigrations.length === 0) {
+      console.log(chalk.yellow("No migrations found to reset."));
+      return;
+    }
+
+    // Rollback in reverse order (latest applied first)
+    for (let i = allMigrations.length - 1; i >= 0; i--) {
+      const migration = allMigrations[i];
+      try {
+        await this.rollbackMigration(migration);
+      } catch (err) {
+        console.error(
+          chalk.red(`Error rolling back ${migration.migration}:`),
+          err.message
+        );
+        break;
+      }
+    }
+
+    console.log(chalk.green("All migrations have been reset."));
   };
 
   // Create a new migration file

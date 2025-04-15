@@ -155,6 +155,37 @@ db-cli rollback
 # Rolled back: 2025_04_04_06_16_45_create_common_crud_procedures.sql
 ```
 
+#### **6. Reset Migrations**
+
+```bash
+db-cli  reset
+```
+
+- 🔄 Rolls back **all applied migrations** in reverse order.
+- Does **not** reapply them — use it to clean your database of all applied migrations.
+
+**Example:**
+
+```bash
+db-cli  reset
+
+# Output (Single SQL Statement in `-- DOWN`):
+# Rolling back: 2024_08_09_13_59_01_create_users_table.sql
+# Rolled back: 2024_08_09_13_59_01_create_users_table.sql
+# ...
+# All migrations have been reset.
+
+# Output (Multiple SQL Statements in `-- DOWN`):
+# Rolling back: 2025_04_04_06_16_45_create_common_crud_procedures.sql
+# Statement 1/4 line 77: DROP PROCEDURE IF EXISTS insert_record_into_table
+# Statement 2/4 line 78: DROP PROCEDURE IF EXISTS update_table_record
+# Statement 3/4 line 79: DROP PROCEDURE IF EXISTS delete_record_from_table
+# Statement 4/4 line 80: DROP PROCEDURE IF EXISTS select_records_from_table
+# Rolled back: 2025_04_04_06_16_45_create_common_crud_procedures.sql
+# ...
+# All migrations have been reset.
+```
+
 **📁 Project Structure**
 
 After setup and creating migrations, your project structure may look like:
@@ -252,6 +283,12 @@ db-cli migrate
 
 ```bash
 db-cli rollback
+```
+
+-  `reset`: Reverts all applied migrations in reverse order.
+
+```bash
+db-cli  reset
 ```
 
 ## Configuration
